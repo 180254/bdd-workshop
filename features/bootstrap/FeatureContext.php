@@ -1,10 +1,7 @@
 <?php
 
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
 
 /**
  * Defines application features from the specific context.
@@ -14,7 +11,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     private $account;
     private $atm;
     private $initialAtmAmountOfMoney;
-    
+
     /**
      * Initializes context.
      *
@@ -24,17 +21,18 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct()
     {
-        $this->account = new Account();
+        $this->account = new Account(new Card());
         $this->atm = new Atm();
     }
 
     /**
      * @Given the account balance is $:balance
+     * @param $balance
      */
     public function theAccountBalanceIs($balance)
     {
-        
-         $this->account->setBalance($balance);
+
+        $this->account->setBalance($balance);
     }
 
     /**
@@ -43,11 +41,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theCardIsValid()
     {
         $card = $this->account->getCard();
-        $cars ->setValid(true);
+        $card->setValid(true);
     }
 
     /**
      * @Given the machine contains $:amount
+     * @param $amount
      */
     public function theMachineContainsEnoughMoney($amount)
     {
@@ -57,30 +56,36 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     /**
      * @When the Account Holder requests $:amountOfMoney
+     * @param $amountOfMoney
      */
     public function theAccountHolderRequests($amountOfMoney)
     {
+        $this->atm->useCard($this->account->getCard());
         $this->atm->withdraw($this->account, $amountOfMoney);
     }
 
     /**
      * @Then the ATM should dispense $:amount
+     * @param $amount
+     * @throws Exception
      */
     public function theAtmShouldDispense($amount)
     {
-        $expectedAmountOfMoney = $this->initialAtmAmountOfMoney -$amount;
-        if($this->atm->getAmountOfMoney() !== $expectedAmountOfMoney) {
-            throw new \Exception();
+        $expectedAmountOfMoney = $this->initialAtmAmountOfMoney - $amount;
+        if ($this->atm->getAmountOfMoney() !== $expectedAmountOfMoney) {
+            throw new \Exception($this->atm->getAmountOfMoney());
         }
     }
 
     /**
      * @Then the account balance should be $:expectedBalance
+     * @param $expectedBalance
+     * @throws Exception
      */
     public function theAccountBalanceShouldBe($expectedBalance)
     {
-        if($expectedBalance !== $this->account->getBalance()) {
-             throw new \Exception();
+        if ($expectedBalance != $this->account->getBalance()) {
+            throw new \Exception($this->account->getBalance());
         }
     }
 
@@ -89,8 +94,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theCardShouldBeReturned()
     {
-       if($this->atm->hasCard()) {
-             throw new \Exception();
-       }
+        if ($this->atm->hasCard()) {
+            throw new \Exception($this->atm->hasCard());
+        }
     }
 }

@@ -11,8 +11,9 @@ class CardSpec extends ObjectBehavior
     {
         $this->shouldHaveType('Card');
     }
-    
-    function it_can_be_valid() {
+
+    function it_can_be_valid()
+    {
         $this->setValid(true);
         $this->shouldBeValid();
     }

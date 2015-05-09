@@ -2,9 +2,14 @@
 
 class Account
 {
+    private $card;
+    private $balance;
 
-private $balance;
-private $card;
+    public function __construct(Card $card)
+    {
+        $this->card = $card;
+    }
+
     public function setBalance($balance)
     {
         $this->balance = $balance;
@@ -13,11 +18,6 @@ private $card;
     public function getBalance()
     {
         return $this->balance;
-    }
-
-    public function __construct(Card $card)
-    {
-        $this->card = $card;
     }
 
     public function getCard()
