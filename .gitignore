@@ -1,5 +1,6 @@
 bin
 composer.lock
+composer.phar
 vendor
 
 # https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore
